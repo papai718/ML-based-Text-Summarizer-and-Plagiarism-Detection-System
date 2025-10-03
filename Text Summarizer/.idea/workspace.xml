@@ -7,7 +7,6 @@
     <list default="true" id="2524af51-c46e-48f7-a0b5-61e16f87b503" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sample.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Plagiarism Detection/.idea/Plagiarism Detection.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../Plagiarism Detection/.idea/Plagiarism Detection.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Plagiarism Detection/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Plagiarism Detection/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Plagiarism Detection/sample.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Plagiarism Detection/sample.ipynb" afterDir="false" />
@@ -31,15 +30,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
