@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2524af51-c46e-48f7-a0b5-61e16f87b503" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Plagiarism Detection/.idea/Plagiarism Detection.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../Plagiarism Detection/.idea/Plagiarism Detection.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Plagiarism Detection/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Plagiarism Detection/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Plagiarism Detection/sample.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Plagiarism Detection/sample.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Text Summarizer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Text Summarizer.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TS.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/TS.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
