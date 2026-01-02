@@ -86,56 +86,90 @@ document.getElementById("copySummary").addEventListener("click", () => {
 });
 
 // Plagiarism checker function (demo)
-document.getElementById("checkPlagiarismBtn").addEventListener("click", () => {
+// Plagiarism checker function
+document.getElementById("checkPlagiarismBtn").addEventListener("click", async () => {
   const text = plagiarismText.value.trim();
   if (!text) {
     alert("Please enter some text to check for plagiarism");
     return;
   }
 
-  // Simulate checking (in a real app this would call a backend)
-  setTimeout(() => {
-    const plagiarismPercent = Math.min(100, Math.floor(Math.random() * 40));
-    document.getElementById("plagiarismPercent").textContent = plagiarismPercent + "%";
-    document.getElementById("originalityPercent").textContent = 100 - plagiarismPercent + "%";
+  // Show loading state
+  const indicator = document.getElementById("plagiarismIndicator");
+  const resultSection = document.getElementById("plagiarismResult");
+  const matchesContainer = document.getElementById("plagiarismMatches");
 
-    const indicator = document.getElementById("plagiarismIndicator");
+  resultSection.classList.remove("hidden");
+  matchesContainer.innerHTML = '<div class="text-center p-4"><i class="fas fa-spinner fa-spin text-blue-500 text-2xl"></i><p class="mt-2 text-gray-600">Checking against database...</p></div>';
+
+  try {
+    const response = await fetch("/check_plagiarism", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      matchesContainer.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-lg">Error: ${data.error}</div>`;
+      return;
+    }
+
+    const similarity = data.similarity_score || 0;
+    const similarityPercent = Math.round(similarity * 100);
+    const isPlagiarized = data.is_plagiarized;
+    const sourceSnippet = data.most_similar_source || "No source found.";
+
+    // Update UI
+    document.getElementById("plagiarismPercent").textContent = similarityPercent + "%";
+    document.getElementById("originalityPercent").textContent = (100 - similarityPercent) + "%";
+
     indicator.style.width = "0%";
     setTimeout(() => {
-      indicator.style.width = plagiarismPercent + "%";
+      indicator.style.width = similarityPercent + "%";
+      if (similarityPercent > 50) {
+        indicator.classList.remove("bg-green-500", "bg-yellow-500");
+        indicator.classList.add("bg-red-500");
+      } else if (similarityPercent > 20) {
+        indicator.classList.remove("bg-green-500", "bg-red-500");
+        indicator.classList.add("bg-yellow-500");
+      } else {
+        indicator.classList.remove("bg-yellow-500", "bg-red-500");
+        indicator.classList.add("bg-green-500");
+      }
     }, 100);
 
-    const matchesContainer = document.getElementById("plagiarismMatches");
+    // Show matches
     matchesContainer.innerHTML = "";
 
-    if (plagiarismPercent > 0) {
-      const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
-      const numMatches = Math.min(3, Math.floor(sentences.length * 0.3));
-
-      for (let i = 0; i < numMatches; i++) {
-        const matchDiv = document.createElement("div");
-        matchDiv.className = "p-4 bg-red-50 rounded-lg border border-red-200";
-        matchDiv.innerHTML = `
-          <div class="flex justify-between items-start mb-2">
-            <span class="font-medium text-red-700">Potential match (${Math.floor(Math.random() * 50) + 50}% similar)</span>
-            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">${Math.floor(Math.random() * 5) + 1} sources</span>
-          </div>
-          <p class="text-sm text-gray-700 mb-2">"${sentences[i] || ''}"</p>
-          <a href="#" class="text-xs text-blue-600 hover:underline">View sources</a>
-        `;
-        matchesContainer.appendChild(matchDiv);
-      }
+    if (similarityPercent > 0) {
+      const matchDiv = document.createElement("div");
+      matchDiv.className = `p-4 rounded-lg border ${isPlagiarized ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'}`;
+      matchDiv.innerHTML = `
+        <div class="flex justify-between items-start mb-2">
+          <span class="font-medium ${isPlagiarized ? 'text-red-700' : 'text-yellow-700'}">
+            ${isPlagiarized ? 'High Similarity Detected' : 'Some Similarity Detected'}
+          </span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Best Match</span>
+        </div>
+        <p class="text-sm text-gray-700 mb-2"><strong>Matched Source Snippet:</strong></p>
+        <p class="text-sm text-gray-600 italic mb-2">"...${sourceSnippet}..."</p>
+      `;
+      matchesContainer.appendChild(matchDiv);
     } else {
       matchesContainer.innerHTML = `
         <div class="p-4 bg-green-50 rounded-lg border border-green-200 text-center">
           <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
-          <p class="text-green-700">No plagiarism detected. Your text appears to be original!</p>
+          <p class="text-green-700">No content matched in our database.</p>
         </div>
       `;
     }
 
-    document.getElementById("plagiarismResult").classList.remove("hidden");
-  }, 1200);
+  } catch (error) {
+    matchesContainer.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-lg">Error connecting to server.</div>`;
+    console.error(error);
+  }
 });
 
 // Download report (demo)

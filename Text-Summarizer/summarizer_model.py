@@ -1,7 +1,6 @@
 """
 summarizer_model.py
-A small module that loads the summarization model and exposes summarize_text().
-This uses T5-small as in your notebook. Adjust MODEL_NAME if you used a different model.
+Reverted to t5-small (as requested) but tuned for abstractive summarization.
 """
 
 import torch
@@ -11,55 +10,50 @@ MODEL_NAME = "t5-small"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Load tokenizer and model
-# Note: this will download the model if not present locally.
 print(f"Loading model '{MODEL_NAME}' on device: {device} ...")
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME).to(device)
-print("Model loaded.")
-
-
-def preprocess_text(text: str) -> str:
-    """
-    Minimal preprocessing: strip and replace newlines.
-    If you had other preprocessing in the notebook, add it here.
-    """
-    return text.strip().replace("\n", " ")
-
+try:
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME).to(device)
+    print("Model loaded.")
+except Exception as e:
+    print(f"Error loading model: {e}")
+    raise e
 
 def summarize_text(article: str) -> str:
     """
-    Generate a summary for `article`. Returns a string summary.
-    Uses generation settings similar to your notebook.
+    Generate a summary utilizing sampling to encourage 'new words' (abstraction).
     """
     if not article or not article.strip():
         return ""
 
-    clean_article = preprocess_text(article)
-
-    # Prepare inputs: for t5 prefix with "summarize:" if you trained it that way
-    # If you fine-tuned without a prefix, you can remove it.
-    input_text = f"summarize: {clean_article}"
+    input_text = "summarize: " + article.strip().replace("\n", " ")
 
     inputs = tokenizer(
         input_text,
         return_tensors="pt",
         max_length=1024,
-        truncation=True,
-        padding="longest"
+        truncation=True
     ).to(device)
 
-    # Generation parameters (from your notebook)
+    # Tune for "Coverage" + "Abstraction"
+    # User Complaint: "Main data missing" -> implies Sampling went too far off track.
+    # Solution: Beam Search (Deterministic) + High Length Penalty + No Repetition
+    
+    # Calculate a reasonable min length based on input
+    input_word_count = len(article.split())
+    min_len = min(50, int(input_word_count * 0.4)) 
+    max_len = min(1200, int(input_word_count * 0.8))
+    
     summary_ids = model.generate(
         inputs["input_ids"],
-        attention_mask=inputs.get("attention_mask", None),
-        min_length=50,
-        max_length=200,
-        num_beams=4,
-        length_penalty=2.0,
-        early_stopping=True,
-        no_repeat_ngram_size=3
+        do_sample=False, # Disable sampling to ensure factual consistency
+        num_beams=5,     # Increased beams for better quality
+        length_penalty=2.5, # Encourages longer summaries (more content coverage)
+        min_length=min_len,
+        max_length=max_len,
+        no_repeat_ngram_size=2, # Stricter repetition check
+        early_stopping=True
     )
 
-    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
+    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     return summary
